@@ -13,12 +13,39 @@ const phrases = [
     "Rabbits are very cute and funny pets"
 ]
 
-startButton.addEventListener('click', (e) =>{
-      
-    startScreen.style.display = 'none';
-    let randomPhrase = getRandomPhraseAsArray(phrases);
-    addPhraseToDisplay(randomPhrase); 
-});
+//Start game
+startGame();
+
+
+qwerty.addEventListener('click', (e) =>{
+    const button = e.target;
+    if(button.className === 'keyrow' || button.className === 'chosen'){
+        return;
+    }
+        
+    button.className = 'chosen';
+    const letter = checkLetter(button);
+    const lives = document.querySelectorAll('.tries');
+
+    if(letter === null){
+        const heart = lives[(4-missed)].firstElementChild;
+        missed +=1;
+        heart.src = "images/lostHeart.png";
+               
+        }
+    
+ checkWin()
+})
+
+//Functions
+function startGame(){
+    startButton.addEventListener('click', (e) =>{
+          
+        startScreen.style.display = 'none';
+        let randomPhrase = getRandomPhraseAsArray(phrases);
+        addPhraseToDisplay(randomPhrase); 
+    });
+    }
 
 function getRandomPhraseAsArray(arr){
     const i= Math.floor(Math.random() * arr.length)
@@ -56,28 +83,8 @@ function checkLetter(button){
             li.className += " " +  'show';
             match = chosenLetter;
         }
-    }return match;
-    
+    }return match;    
 }
-
-qwerty.addEventListener('click', (e) =>{
-    const button = e.target;
-   if(button.className === 'keyrow' || button.className === 'chosen'){
-        return;
-    }else{
-        button.className = 'chosen';
-        const letter = checkLetter(button);
-        const lives = document.querySelector('#scoreboard ol');
-
-        if(letter === null){
-            lives.lastElementChild.display = "none";
-            missed +=1;
-        }
-    }
- checkWin()
-})
-
-
 
 function checkWin(){
     let lettersToBeGuessed = document.querySelectorAll('.letter');
@@ -87,16 +94,17 @@ function checkWin(){
     
     if(lettersToBeGuessed.length === guessedLetters.length){
         console.log("you win")
-        startScreen.className += " " + 'win';
-        startScreen.style.display ="";
+        startScreen.className = "start" + ' win';
+        startScreen.style.display = "";
         headline.textContent = 'You won!';
         startScreen.display = 'flex';
         resetGame();
     
     }
+
     if(missed > 4){
-        startScreen.className += " " + 'lose';
-        startScreen.style.display ="";
+        startScreen.className = "start" + ' lose';
+        startScreen.style.display = "";
         headline.textContent = 'You lost!';
         console.log("you lose");
         resetGame();
@@ -104,36 +112,36 @@ function checkWin(){
 }
 
 function resetGame(){
-    startButton.textContent = "Restart Game";
-    missed = 0;
-    //nieuwe hartjes
-    const lives = document.querySelector('#scoreboard ol');
-    for(let i = 0; i<lives.length; i++){
-        lives.lastElementChild.display = "";
-    }
-    
-        
-    const oldLetters = phrase.querySelectorAll('li');
-    console.log(oldLetters);
-    for(let i = 0; i<oldLetters.length; i++){
-        let parent = oldLetters.parentNode;
-        log.console(parent);
-        parent.removeChild(parent.lastElementChild);
-    }
-    const letters = document.querySelectorAll('#phrase li'); 
-    for(let i = 0; i< letters.length; i++){
-        if(letters[i].className === "letter show"){
-        letters[i].className = "letter";
-        }
-    }
+    startButton.textContent = "Restart Game";    
+    removeOldPhrase();
+    resetButtons();   
+    resetLives();
+}
 
+function removeOldPhrase(){
+    const oldLetters = phrase.querySelectorAll('li');
+    for(let i = 0; i<oldLetters.length; i++){
+        let parent = oldLetters[i].parentNode;
+        parent.removeChild(parent.firstElementChild);
+    }
+}
+
+function resetButtons(){
     const buttons = document.getElementsByTagName('button');
     for(let i = 0; i< buttons.length; i++){
         buttons[i].className = "";
-    }
-  
-
+    } 
 }
+
+function resetLives(){
+    missed = 0;
+    const hearts = document.querySelectorAll('.tries');
+    for(let i=0; i<hearts.length; i++){
+        const img = hearts[i].firstElementChild;
+        img.src = "images/liveHeart.png";
+    }       
+}
+
 
 
 
