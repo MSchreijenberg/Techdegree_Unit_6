@@ -16,26 +16,24 @@ const phrases = [
 //Start game
 startGame();
 
-
 qwerty.addEventListener('click', (e) =>{
     const button = e.target;
-    if(button.className === 'keyrow' || button.className === 'chosen'){
+    if(button.parentNode.className !== 'keyrow' || button.className === 'chosen'){
         return;
     }
         
     button.className = 'chosen';
-    const letter = checkLetter(button);
-    const lives = document.querySelectorAll('.tries');
-
-    if(letter === null){
-        const heart = lives[(4-missed)].firstElementChild;
-        missed +=1;
-        heart.src = "images/lostHeart.png";
-               
-        }
+    const letterFound = checkLetter(button);
     
- checkWin()
+    if(letterFound === null){
+        const heart = document.querySelectorAll('.tries')[(4-missed)].firstElementChild;
+        missed +=1;
+        heart.src = "images/lostHeart.png";             
+    } 
+
+    checkWin()
 })
+
 
 //Functions
 function startGame(){
@@ -45,14 +43,13 @@ function startGame(){
         let randomPhrase = getRandomPhraseAsArray(phrases);
         addPhraseToDisplay(randomPhrase); 
     });
-    }
+}
 
 function getRandomPhraseAsArray(arr){
     const i= Math.floor(Math.random() * arr.length)
     const randomPhrase = arr[i];
     const phraseAsArray = randomPhrase.split("");
     return phraseAsArray;
-
 }
 
 function addPhraseToDisplay(arr){
@@ -93,20 +90,18 @@ function checkWin(){
     const headline = document.querySelector('.title');
     
     if(lettersToBeGuessed.length === guessedLetters.length){
-        console.log("you win")
         startScreen.className = "start" + ' win';
         startScreen.style.display = "";
         headline.textContent = 'You won!';
         startScreen.display = 'flex';
-        resetGame();
-    
+        resetGame();    
     }
 
     if(missed > 4){
         startScreen.className = "start" + ' lose';
         startScreen.style.display = "";
         headline.textContent = 'You lost!';
-        console.log("you lose");
+        startScreen.display = 'flex';
         resetGame();
     }
 }
